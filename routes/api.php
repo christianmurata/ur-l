@@ -1,9 +1,7 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
-use App\Http\Controllers\UrlController;
+use App\Http\Controllers\{UserController, UrlController};
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +14,8 @@ use App\Http\Controllers\UrlController;
 |
 */
 
+Route::get('/urls', [UrlController::class, 'index']);
+Route::get('/urls/{url}', [UrlController::class, 'show']);
+Route::post('/urls', [UrlController::class, 'store']);
+
+Route::get('/users', [UserController::class, 'index']);
