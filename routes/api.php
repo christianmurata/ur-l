@@ -14,6 +14,8 @@ use App\Http\Controllers\{UserController, UrlController};
 |
 */
 
+Route::get('/', function () { return 'API ur-l'; });
+
 Route::get('/urls', [UrlController::class, 'index']);
 Route::get('/urls/{url}', [UrlController::class, 'show']);
 Route::post('/urls', [UrlController::class, 'store']);
