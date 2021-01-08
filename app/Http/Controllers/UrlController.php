@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
 use App\Models\Url;
+use App\Http\Resources\UrlCollection;
 use App\Http\Requests\UrlStoreRequest;
 
 class UrlController extends Controller
@@ -17,7 +16,7 @@ class UrlController extends Controller
     public function index()
     {
         // get all urls
-        return Url::all();
+        return new UrlCollection(Url::paginate(10));
     }
 
     /**
@@ -28,6 +27,7 @@ class UrlController extends Controller
      */
     public function store(UrlStoreRequest $request)
     {
+        // create a new short URL
         $domain = $request->root();
         $short_code = substr(md5(time(). $request->url()), 0, 5);
 
@@ -53,13 +53,24 @@ class UrlController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\UrlStoreRequest  $request
      * @param  \App\Models\Url  $url
+     *
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Url $url)
+    public function update(UrlStoreRequest $request, Url $url)
     {
-        //
+        if($request['user_id'] !== $url->user_id)
+            return response()->json([
+                'message' => 'This is not allowed to update this URL'
+            ], 403);
+
+        if(!$url->update(['url' => $request['url']]))
+            return response()->json([
+                'message' => 'Error to update resource'
+            ], 400);
+
+        return $url;
     }
 
     /**
@@ -70,7 +81,14 @@ class UrlController extends Controller
      */
     public function destroy(Url $url)
     {
-        //
+        if(!$url->delete())
+            return response()->json([
+                'message' => 'Error to delete this resource'
+            ], 400);
+
+        return response()->json([
+            'message' => 'Resource deleted successfully'
+        ], 200);
     }
 
     /**
@@ -81,6 +99,7 @@ class UrlController extends Controller
      */
     public function redirect($short_code)
     {
+        // redirect the short url to destination
         $url = Url::where('short_code', $short_code)->first();
 
         if(!$url)
