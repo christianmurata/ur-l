@@ -62,7 +62,7 @@ class UrlController extends Controller
     {
         if($request['user_id'] !== $url->user_id)
             return response()->json([
-                'message' => 'This is not allowed to update this URL'
+                'message' => 'This user is not allowed to update this URL'
             ], 403);
 
         if(!$url->update(['url' => $request['url']]))
