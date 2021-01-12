@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\{UserController, UrlController};
+use App\Http\Controllers\{UserController, UrlController, AuthController};
 
 /*
 |--------------------------------------------------------------------------
@@ -14,12 +14,20 @@ use App\Http\Controllers\{UserController, UrlController};
 |
 */
 
+/* Unprotected routes*/
 Route::get('/', function () { return 'API ur-l'; });
 
-Route::get('/urls', [UrlController::class, 'index']);
-Route::get('/urls/{url}', [UrlController::class, 'show']);
-Route::post('/urls', [UrlController::class, 'store']);
-Route::patch('/urls/{url}', [UrlController::class, 'update']);
-Route::delete('/urls/{url}', [UrlController::class, 'destroy']);
+Route::post('/auth/login', [AuthController::class, 'login']);
 
-Route::get('/users', [UserController::class, 'index']);
+/* Protected routes*/
+Route::group(['middleware' => ['auth.jwt']], function () {
+    Route::get('/urls', [UrlController::class, 'index']);
+    Route::get('/urls/{url}', [UrlController::class, 'show']);
+    Route::post('/urls', [UrlController::class, 'store']);
+    Route::patch('/urls/{url}', [UrlController::class, 'update']);
+    Route::delete('/urls/{url}', [UrlController::class, 'destroy']);
+
+    Route::get('/users', [UserController::class, 'index']);
+
+    Route::post('/auth/logout', [AuthController::class, 'logout']);
+});

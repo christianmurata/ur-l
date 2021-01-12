@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Url;
+use App\Models\{Url, User};
 use App\Http\Resources\UrlCollection;
 use App\Http\Requests\UrlStoreRequest;
 
@@ -31,9 +31,12 @@ class UrlController extends Controller
         $domain = $request->root();
         $short_code = substr(md5(time(). $request->url()), 0, 5);
 
+        // authenticated User
+        $user = User::getAuthenticatedUser();
+
         return Url::create([
             'url'        => $request->url,
-            'user_id'    => $request->user_id,
+            'user_id'    => $user['id'],
             'short_url'  => "{$domain}/$short_code",
             'short_code' => $short_code
         ]);
@@ -60,11 +63,6 @@ class UrlController extends Controller
      */
     public function update(UrlStoreRequest $request, Url $url)
     {
-        if($request['user_id'] !== $url->user_id)
-            return response()->json([
-                'message' => 'This user is not allowed to update this URL'
-            ], 403);
-
         if(!$url->update(['url' => $request['url']]))
             return response()->json([
                 'message' => 'Error to update resource'

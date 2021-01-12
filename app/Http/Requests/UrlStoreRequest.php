@@ -24,8 +24,7 @@ class UrlStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'url'       => 'required|url',
-            'user_id'   => 'required|numeric',
+            'url' => 'required|url'
         ];
     }
 
@@ -37,8 +36,7 @@ class UrlStoreRequest extends FormRequest
     public function messages()
     {
         return [
-            'url.required' => 'url is required!',
-            'user_id.required' => 'user_id is required!',
+            'url.required' => 'url is required!'
         ];
     }
 }
