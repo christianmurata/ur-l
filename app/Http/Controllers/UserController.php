@@ -6,6 +6,7 @@ use JWTAuth;
 use Illuminate\Http\Request;
 
 use App\Models\User;
+use App\Http\Requests\UserStoreRequest;
 
 class UserController extends Controller
 {
@@ -25,9 +26,13 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(UserStoreRequest $request)
     {
-        //
+        return User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => $request->password,
+        ]);
     }
 
     /**

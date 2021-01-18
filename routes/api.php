@@ -17,6 +17,7 @@ use App\Http\Controllers\{UserController, UrlController, AuthController};
 /* Unprotected routes*/
 Route::get('/', function () { return 'API ur-l'; });
 
+Route::post('/register', [UserController::class, 'store']);
 Route::post('/auth/login', [AuthController::class, 'login']);
 
 /* Protected routes*/
@@ -30,4 +31,5 @@ Route::group(['middleware' => ['auth.jwt']], function () {
     Route::get('/users', [UserController::class, 'index']);
 
     Route::post('/auth/logout', [AuthController::class, 'logout']);
+    Route::post('/auth/refresh', [AuthController::class, 'refresh']);
 });
